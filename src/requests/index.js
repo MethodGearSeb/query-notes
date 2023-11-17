@@ -1,11 +1,12 @@
 import axios from 'axios'
 
-export const getNotes = () => axios
-  .get('http://localhost:3001/api/notes')
-  .then(res => res.data)
+const url = 'http://localhost:3001/notes'
 
-const noteService = {
-  getNotes,
-}
+export const getNotes = () =>
+  axios.get(url).then(res => res.data)
 
-export default noteService
+export const createNote = newNote =>
+  axios.post(url, newNote).then(res => res.data)
+
+export const updateNote = updatedNote =>
+  axios.put(`${url}/${updatedNote.id}`, updatedNote).then(res => res.data)
