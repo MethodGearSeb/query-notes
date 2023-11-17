@@ -6,15 +6,18 @@ const App = () => {
 
   const newNoteMutation = useMutation({
     mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries('notes')
-    },
+    onSuccess: newNote => {
+      const notes = queryClient.getQueryData(['notes'])
+      queryClient.setQueryData(['notes'], notes.concat(newNote))
+    }
   })
 
   const updateNoteMutation = useMutation({
     mutationFn: updateNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries('notes')
+    onSuccess: updatedNote => {
+      const update = note => note.id !== updatedNote.id ? note : updatedNote
+      const notes = queryClient.getQueryData(['notes'])
+      queryClient.setQueryData(['notes'], notes.map(update))
     },
   })
 
@@ -30,7 +33,8 @@ const App = () => {
 
   const result = useQuery({
     queryKey: ['notes'],
-    queryFn: getNotes
+    queryFn: getNotes,
+    refetchOnWindowFocus: false,
   })
 
   if (result.isLoading)
